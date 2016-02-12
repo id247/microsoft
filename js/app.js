@@ -1,187 +1,152 @@
 'use strict';
 
-import 'babel-polyfill';
-import API from 'API';
-import modal from 'modal';
-import calendar from 'calendar/calendar';
-
-import DateHelper from 'date-helper';
-
-const dateHelper = new DateHelper()
+//import 'babel-polyfill';
 
 const app = ( () => {
 
-	/*
-	*	settings
-	*/
-
-	let _appSettings = {
+	function getDOM(){
+		return{
+			container: document.querySelector('#body-container'),
+			pages: document.querySelectorAll('.js-page'),
+			steps: document.querySelectorAll('.js-step'),
+			navLinks: document.querySelectorAll('.js-nav'),
+			tutorialNavLinks: document.querySelectorAll('.js-tutorial-nav'),
+		}
 	}
-	
-	function setSettings(settings){
-		Object.assign(_appSettings, settings);
+
+	function setHeaderFixed(container){
+		container.classList.add('fixed-header');
 	}
 
-	/* ==========================================================================
-	 * EVENTS
-	 * ========================================================================== */
-	
-	function events(){
-		
-		const authTest = document.getElementById('test-auth');
-		authTest && authTest.addEventListener('click', function(e){
 
-			e.preventDefault();
+	function scrollAnimationStep(initPos, stepAmount) {
+		var newPos = initPos - stepAmount > 0 ? initPos - stepAmount : 0;
 
+		document.body.scrollTop = newPos;
+
+		newPos && setTimeout(function () {
+			scrollAnimationStep(newPos, stepAmount);
+		}, 20);
+	}
+
+	function scrollTopAnimated(speed) {
+		var topOffset = document.body.scrollTop;
+		var stepAmount = topOffset;
+
+		speed && (stepAmount = (topOffset * 20)/speed);
+
+		scrollAnimationStep(topOffset, stepAmount);
+	};		
+
+	function showActivePage(pages, activePageId){
+
+		if (!activePageId) return;
+
+		pages && [].forEach.call( pages, (page) => {
+			if (page.id === activePageId){
+				page.classList.remove('invisible');
+				page.classList.add('visible');
+					
+				scrollTopAnimated(200);
+			}else{
+				page.classList.remove('visible');
+				page.classList.add('invisible');
+			}
+			//add transitions only after first routing
+			setTimeout( () => {
+				page.classList.add('transition');
+			}, 1000);
 		});
-		
 
 	}
 
-	/* ==========================================================================
-	 * modal form
-	 * ========================================================================== */
-	
-	function modalForm(){
+	function hightlightActiveLink(links, activeLinkId){
 
-		const modalFormAuth = document.getElementById('modal-form-auth');
-		const competitionText = document.getElementById('competition-text');
-		const competitionForm = document.getElementById('competition-form');
+		if (!activeLinkId) return;
 
-		function ShowForm(){
-			competitionText.style.display = 'none';
-			competitionForm.style.display = 'block';	
+		links && [].forEach.call( links, link => {
+			if (link.getAttribute('href') === '#' + activeLinkId){
+				link.classList.add('active');
+				link.parentNode.classList.add('active');
+			}else{
+				link.parentNode.classList.remove('active');
+				link.classList.remove('active');
+			}
+		});
+	}
+
+
+	function mainRouter(links, pages, pageId = false){
+
+		let pageExists;
+
+		if (pageId){
+			window.location.hash = '#/page-' + pageId;
+		}else{
+			pageId = window.location.hash.replace('#/page-', '');
+			pageExists = [].filter.call( pages, page => { return (pageId === page.id); });
+				
+			if (pageExists.length == 0 ) { 
+				pageId = 'home';
+			}
 		}
 
-		//if we already loged in
-		API.getCurrentUserAjax()
-		.then( 
-			(user) => {
-				console.log('get user', user);
-				ShowForm();	
-			},
-			(err) => {
-				console.error('get user', err);
-			}
-		);
+		showActivePage(pages, pageId);
 
-		//auth click
-		modalFormAuth && modalFormAuth.addEventListener('click', function(e){
+		hightlightActiveLink(links, pageId);
+	}
 
-			e.preventDefault();
+	function stepsRouter(links, pages, pageId = false){
 
-			this.disabled = 'disabled';
-			this.innerHTML = '<span class="icon icon__preloader"></span> Отправка запроса...';
+		let pageExists;
 
-			API.getCurrentUserAjax()
-			.then( 
-				(user) => {
-					console.log('get user', user);
-				},
-				(err) => {
-					if (err === 'no token' || err.status === 401 || err.status === 403 ){
-						return API.auth();
-					}else{
-						throw new Error(err);
-					}				
+		if (!pageId){
+			pageId = pages[0].id; 
+		}
+
+		showActivePage(pages, pageId);
+
+		hightlightActiveLink(links, pageId);
+
+	}
+
+	function navigation(links, pages, router){
+
+		links && [].forEach.call( links, (link) => {
+
+			link.addEventListener( 'click', (e) => {
+				e.preventDefault();
+
+				const pageId = link.getAttribute('href').substr(1);
+
+				const pageExists = [].filter.call( pages, page => { return (pageId === page.id); });
+				
+				if (pageExists.length == 1 ) { 
+					router(links, pages, pageId);
 				}
-			)
-			.then( 
-				() => {
-					return API.getCurrentUserAjax();
-				}
-			)
-			.then( 
-				(user) => {
-					console.log('get user', user);
-
-					return API.inviteToGroup(_appSettings.API.groupId);
-				}
-			)
-			.then(
-				(data) => {
-					if (data === 'MembershipConfirmed'){
-						ShowForm();
-					}else{
-						throw new Error(data);
-					}
-				}
-			)
-			.catch( (err) =>{
-				console.error('error', err);
 			});
-			
 
-		});
-
-		// competition form submit		
-		competitionForm && competitionForm.addEventListener('submit', function(e){
-			
-			e.preventDefault();
-
-			let isValid = true;
-
-			//textarea
-			if (!this.elements.message.value){
-
-				this.elements.message.classList.add('error');
-				isValid = false;
-		
-			}else{
-		
-				this.elements.message.classList.remove('error');
-		
-			}
-
-			//agree
-			//get error label
-			let label = this.elements.agree.parentNode.parentNode.querySelector('label.error');
-				
-			if (!this.elements.agree.checked){
-
-				//add error if it doesnt exist
-			 	!label && this.elements.agree.parentNode.insertAdjacentHTML('afterend', '<label class="error">&nbsp;&nbsp;Вы должны принять условия</label>');
-				isValid = false;
-
-			}else{
-				
-				//remove error if it exists
-				label && label.parentNode.removeChild(label);
-			
-			}
-
-			if (isValid){
-
-				alert('Тут будет метод отправки сообщения');
-
-				// API.sendMessage({
-				// 	to: 1000001035607,
-				// 	body: 'Тестовое сообщение'
-				// }, (data) => {
-				// 	console.log(data);
-				// });
-
-			}
 		});
 
 	}
+
 
 	/*
 	*	INIT
 	*/
 	function init(options){
 
-		setSettings(options);
+		let DOM = getDOM();
 
-		events();
+		setHeaderFixed(DOM.container);
 
-		modal.init('js-baz-modal');	
+		mainRouter(DOM.navLinks, DOM.pages);
+		stepsRouter(DOM.tutorialNavLinks, DOM.steps);
+		
+		navigation(DOM.navLinks, DOM.pages, mainRouter);		
+		navigation(DOM.tutorialNavLinks, DOM.steps, stepsRouter);
 
-		API.init(_appSettings.API);
 
-		calendar.init(_appSettings.calendar);
-
-		modalForm();
 
 	}
 

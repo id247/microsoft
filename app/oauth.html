@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Document</title>
+
+	<style>
+		.error{
+			display: none;
+		}
+		.error__item{
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	
+	<div class="error" id="error">
+
+		<div class="error__item" id="invalid_request">
+			
+			<h1>Ошибка. Неверный запрос</h1>
+			
+			<p>
+				Приложение отправило неверный запрос к серверу. Пожалуйста, сообщите об этом администрации сайта.
+			</p>
+
+
+		</div>
+
+		<div class="error__item" id="unauthorized_client">
+			
+			<h1>Ошибка. Вы не авторизованы</h1>
+
+			<p>
+				Попробуйте войти в свою учетнвю запись и попробовать снова.
+			</p>
+
+		</div>
+
+		<div class="error__item" id="invalid_scope">
+			
+			<h1>Ошибка. Неверный набор прав.</h1>
+			
+			<p>
+				Приложение запрашивает неверный набор прав. Пожалуйста, сообщите об этом администрации сайта.
+			</p>
+
+		</div>
+
+		<div class="error__item" id="access_denied">
+			
+			<h1>Ошибка. Вы запретили приложению доступ к вашему акаунту.</h1>
+
+			<p>
+				Если это не так, сообщите об этой ошибке администратору.
+			</p>
+
+		</div>
+
+	</div>
+
+
+	<script>
+		if (window.location.href.indexOf('error') > -1){
+
+			document.getElementById('error').style.display = 'block';
+
+		}
+		if (window.location.href.indexOf('invalid_request') > -1){
+
+			document.getElementById('invalid_request').style.display = 'block';
+
+		}
+		if (window.location.href.indexOf('unauthorized_client') > -1){
+
+			document.getElementById('unauthorized_client').style.display = 'block';
+
+		}
+		if (window.location.href.indexOf('invalid_scope') > -1){
+
+			document.getElementById('invalid_scope').style.display = 'block';
+
+		}
+		if (window.location.href.indexOf('access_denied') > -1){
+
+			document.getElementById('access_denied').style.display = 'block';
+
+		}
+	</script>
+</body>
+</html>
