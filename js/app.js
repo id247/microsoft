@@ -9,8 +9,9 @@ const app = ( () => {
 			container: document.querySelector('#body-container'),
 			pages: document.querySelectorAll('.js-page'),
 			steps: document.querySelectorAll('.js-step'),
-			navLinks: document.querySelectorAll('.js-nav'),
+			navLinks: document.querySelectorAll('[data-nav]'),
 			tutorialNavLinks: document.querySelectorAll('.js-tutorial-nav'),
+			videos: document.querySelectorAll('.videos iframe'),
 		}
 	}
 
@@ -22,15 +23,19 @@ const app = ( () => {
 	function scrollAnimationStep(initPos, stepAmount) {
 		var newPos = initPos - stepAmount > 0 ? initPos - stepAmount : 0;
 
-		document.body.scrollTop = newPos;
-
+		if (document.documentElement && document.documentElement.scrollTop){
+			document.documentElement.scrollTop = newPos;
+		}else{
+			document.body.scrollTop = newPos;
+		}
+		
 		newPos && setTimeout(function () {
 			scrollAnimationStep(newPos, stepAmount);
 		}, 20);
 	}
 
-	function scrollTopAnimated(speed) {
-		var topOffset = document.body.scrollTop;
+	function scrollTopAnimated(topOffset, speed) {
+		
 		var stepAmount = topOffset;
 
 		speed && (stepAmount = (topOffset * 20)/speed);
@@ -38,76 +43,108 @@ const app = ( () => {
 		scrollAnimationStep(topOffset, stepAmount);
 	};		
 
-	function showActivePage(pages, activePageId){
 
-		if (!activePageId) return;
+	function showActivePage(pages, links, hash){
 
-		pages && [].forEach.call( pages, (page) => {
-			if (page.id === activePageId){
-				page.classList.remove('invisible');
-				page.classList.add('visible');
+		const pageIds = hash.substr(2).split('/');
+
+		const topOffset = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+		console.log(topOffset);
+		let timout = 0;
+
+		if (topOffset < 200 ){
+			timout = 0;
+		}else if (topOffset < 1000){
+			timout = 200;
+		}else{
+			timout = 300;
+		}
+
+		scrollTopAnimated(topOffset, timout);
+
+		setTimeout( () => {
+
+			pages && [].forEach.call( pages, (page) => {
+				if ( pageIds.indexOf(page.id) > -1){
+					page.classList.remove('invisible');
+					page.classList.add('visible');
+						
 					
-				scrollTopAnimated(200);
-			}else{
-				page.classList.remove('visible');
-				page.classList.add('invisible');
-			}
-			//add transitions only after first routing
-			setTimeout( () => {
-				page.classList.add('transition');
-			}, 1000);
-		});
+				}else{
+					page.classList.remove('visible');
+					page.classList.add('invisible');
+				}
+				//add transitions only after first routing
+				setTimeout( () => {
+					page.classList.add('transition');
+				}, 1000);
+			});
+
+		}, timout);
+
+
+		hightlightLinks(links, hash);
 
 	}
 
-	function hightlightActiveLink(links, activeLinkId){
-
-		if (!activeLinkId) return;
+	function hightlightLinks(links, hash){
 
 		links && [].forEach.call( links, link => {
-			if (link.getAttribute('href') === '#' + activeLinkId){
+			var parent = link.parentNode.tagName.toLowerCase() === 'li' ? link.parentNode : false;
+
+			const linkIds = link.getAttribute('data-nav').substr(2).split('/');
+			const highlightIndex = parseInt( link.getAttribute('data-highlight') ) || 0;
+			const hashIds = hash.substr(2).split('/');
+
+			if ( hashIds.indexOf( linkIds[highlightIndex - 1] ) > -1 ){
 				link.classList.add('active');
-				link.parentNode.classList.add('active');
+				if (parent){
+					parent.classList.add('active');
+				}
 			}else{
-				link.parentNode.classList.remove('active');
 				link.classList.remove('active');
+				if (parent){
+					parent.classList.remove('active');
+				}
 			}
 		});
 	}
 
 
-	function mainRouter(links, pages, pageId = false){
+	function mainRouter(links, pages, hash = false){
 
 		let pageExists;
 
-		if (pageId){
-			window.location.hash = '#/page-' + pageId;
+		if (hash){
+			window.location.hash = hash;
 		}else{
-			pageId = window.location.hash.replace('#/page-', '');
-			pageExists = [].filter.call( pages, page => { return (pageId === page.id); });
-				
-			if (pageExists.length == 0 ) { 
-				pageId = 'home';
+			hash = window.location.hash;
+
+			if ( !isPageExists(pages, hash) ) { 
+				hash = '#/home';
 			}
 		}
 
-		showActivePage(pages, pageId);
+		showActivePage(pages, links, hash);
 
-		hightlightActiveLink(links, pageId);
 	}
 
-	function stepsRouter(links, pages, pageId = false){
 
-		let pageExists;
+	function isPageExists(pages, hash){
 
-		if (!pageId){
-			pageId = pages[0].id; 
+		var pageIds = hash.substr(2).split('/');
+
+		var existsPages = [].filter.call( pages, page => { 
+			return ( 
+				pageIds.indexOf(page.id) > -1 
+			); 
+		});
+		
+		if (existsPages.length === pageIds.length){
+			return true;
 		}
-
-		showActivePage(pages, pageId);
-
-		hightlightActiveLink(links, pageId);
-
+		
+		return false;
 	}
 
 	function navigation(links, pages, router){
@@ -117,15 +154,23 @@ const app = ( () => {
 			link.addEventListener( 'click', (e) => {
 				e.preventDefault();
 
-				const pageId = link.getAttribute('href').substr(1);
+				const hash = link.getAttribute('data-nav');
 
-				const pageExists = [].filter.call( pages, page => { return (pageId === page.id); });
-				
-				if (pageExists.length == 1 ) { 
-					router(links, pages, pageId);
+				if (isPageExists(pages, hash) ) { 
+					router(links, pages, hash);
+				}else{
+					console.error('no such page');
 				}
 			});
 
+		});
+
+	}
+
+	function stopVideos(videos){
+
+		videos && [].forEach.call( videos,  video => {
+			video.src = video.src;
 		});
 
 	}
@@ -141,10 +186,10 @@ const app = ( () => {
 		setHeaderFixed(DOM.container);
 
 		mainRouter(DOM.navLinks, DOM.pages);
-		stepsRouter(DOM.tutorialNavLinks, DOM.steps);
+		//stepsRouter(DOM.tutorialNavLinks, DOM.steps);
 		
 		navigation(DOM.navLinks, DOM.pages, mainRouter);		
-		navigation(DOM.tutorialNavLinks, DOM.steps, stepsRouter);
+		//navigation(DOM, DOM.tutorialNavLinks, DOM.steps, stepsRouter);
 
 
 
