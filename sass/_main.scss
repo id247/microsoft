@@ -430,9 +430,9 @@ sup{
 	min-height: image-height('../images/bg/home-mix.jpg');
 	padding: 145px 0 90px;
 	position: relative;
+	overflow: hidden;
 
-	&:before{
-		content: '';
+	&__tablet{
 		display: block;
 		background: url(../images/bg/lesson.png) 50% 0 no-repeat;
 		width: image-width('../images/bg/lesson.png');
@@ -447,7 +447,7 @@ sup{
 		background: #fff;
 		padding: 75px 50px;
 		border-bottom: 18px solid #d6380c;
-		width: 536px;
+		width: 46%;
 	}
 
 	&__title{
@@ -467,7 +467,7 @@ sup{
 	&__button-placeholder{
 		display: inline-block;
 		vertical-align: top;
-		margin: 0 9px 0 0;
+		margin: 0 9px 10px 0;
 	}
 }
 
@@ -522,6 +522,11 @@ sup{
 		background-size: cover;
 		height: image-height('../images/bg/main.jpg');
 		margin: 0 0 70px;
+	}
+
+	&--mix:before{
+		background-image: url(../images/bg/about-mix.jpg);
+		height: image-height('../images/bg/about-mix.jpg');
 	}
 
 	&__title{

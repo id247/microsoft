@@ -9,6 +9,7 @@ const app = ( () => {
 			container: document.querySelector('#body-container'),
 			pages: document.querySelectorAll('.js-page'),
 			navLinks: document.querySelectorAll('[data-nav]'),
+			mixTablet: document.querySelector('#home-mix-tablet'),
 		}
 	}
 
@@ -191,6 +192,28 @@ const app = ( () => {
 
 	})();
 
+	function parallax(element){
+
+		function move(element){
+			const topOffset = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+			
+			const parentTop = element.parentNode.offsetTop;
+
+			const distance = ( topOffset - parentTop ) / 1.5;
+
+			if (distance <= 0){
+				element.style.bottom = distance + 'px';
+			}else{
+				element.style.bottom = 0 + 'px';
+			}
+		}
+
+		document.addEventListener('scroll', (e) => {
+			move(element);
+		});
+
+	}
+
 
 	/*
 	*	INIT
@@ -202,6 +225,8 @@ const app = ( () => {
 		setHeaderFixed(DOM.container);
 
 		mainRouter.init(DOM.navLinks, DOM.pages);
+
+		parallax(DOM.mixTablet);
 
 	}
 
