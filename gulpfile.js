@@ -106,13 +106,13 @@ gulp.task('vers', function(){
     var mosregVer =  md5File('./app/js/mosreg.js');
 
     gulp.src(['./app/*.html'])
-    .pipe(replace( /style\.css(.*)\"/g, 'style.css?_v=' + cssVer + '"' ))
-    .pipe(replace( /local\.js(.*)\"/g, 'local.js?_v=' + localVer + '"' ))
-    .pipe(replace( /dnevnik\.js(.*)\"/g, 'dnevnik.js?_v=' + dnevnikVer + '"' ))
-    .pipe(replace( /mosreg\.js(.*)\"/g, 'mosreg.js?_v=' + mosregVer + '"' ))
-    .pipe(replace( /\.png(.*)\"/g, '.png?_v=' + cssVer + '"'))
-    .pipe(replace( /\.jpg(.*)\"/g, '.jpg?_v=' + cssVer + '"'))
-    .pipe(replace( /\.gif(.*)\"/g, '.gif?_v=' + cssVer + '"'))
+    .pipe(replace( /style\.css(\S*)\"/g, 'style.css?_v=' + cssVer + '"' ))
+    .pipe(replace( /local\.js(\S*)\"/g, 'local.js?_v=' + localVer + '"' ))
+    .pipe(replace( /dnevnik\.js(\S*)\"/g, 'dnevnik.js?_v=' + dnevnikVer + '"' ))
+    .pipe(replace( /mosreg\.js(\S*)\"/g, 'mosreg.js?_v=' + mosregVer + '"' ))
+    .pipe(replace( /\.png(\S*)\"/g, '.png?_v=' + cssVer + '"'))
+    .pipe(replace( /\.jpg(\S*)\"/g, '.jpg?_v=' + cssVer + '"'))
+    .pipe(replace( /\.gif(\S*)\"/g, '.gif?_v=' + cssVer + '"'))
     .on('error', console.log)
     .pipe(gulp.dest('./app'));
 
