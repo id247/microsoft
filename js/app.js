@@ -8,10 +8,7 @@ const app = ( () => {
 		return{
 			container: document.querySelector('#body-container'),
 			pages: document.querySelectorAll('.js-page'),
-			steps: document.querySelectorAll('.js-step'),
 			navLinks: document.querySelectorAll('[data-nav]'),
-			tutorialNavLinks: document.querySelectorAll('.js-tutorial-nav'),
-			videos: document.querySelectorAll('.videos iframe'),
 		}
 	}
 
@@ -28,7 +25,7 @@ const app = ( () => {
 		}else{
 			document.body.scrollTop = newPos;
 		}
-		
+
 		newPos && setTimeout(function () {
 			scrollAnimationStep(newPos, stepAmount);
 		}, 20);
@@ -68,11 +65,13 @@ const app = ( () => {
 				if ( pageIds.indexOf(page.id) > -1){
 					page.classList.remove('invisible');
 					page.classList.add('visible');
-						
-					
+
+					lazyLoad.show(page);
 				}else{
 					page.classList.remove('visible');
 					page.classList.add('invisible');
+
+					lazyLoad.hide(page);
 				}
 				//add transitions only after first routing
 				setTimeout( () => {
@@ -167,13 +166,30 @@ const app = ( () => {
 
 	}
 
-	function stopVideos(videos){
+	const lazyLoad = ( () => {
 
-		videos && [].forEach.call( videos,  video => {
-			video.src = video.src;
-		});
+		function each(page, action = 'show'){
+			const items =  page.querySelectorAll('[data-src]');
 
-	}
+			items && [].forEach.call( items,  item => {
+				item.src = (action === 'show') ? item.getAttribute('data-src') : 'blank.html';
+			});
+		}
+
+		function hide(page){
+			each(page, 'hide');
+		}
+
+		function show(page){
+			each(page, 'show');
+		}
+
+		return {
+			hide: hide,
+			show: show
+		}
+
+	})();
 
 
 	/*
