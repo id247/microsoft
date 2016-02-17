@@ -1,6 +1,7 @@
 'use strict';
 
-//import 'babel-polyfill';
+import { createHistory } from 'history'
+import 'babel-polyfill';
 
 const app = ( () => {
 
@@ -19,6 +20,19 @@ const app = ( () => {
 
 
 	const mainRouter = ( () => {
+
+		let history = createHistory();
+
+		function historyHandler(links, pages){
+			
+			let unlisten = history.listen(location => {
+				console.log(location);
+				if ( location.action === 'PUSH' || location.action === 'POP' ){
+					showActivePage(links, pages, location.hash);
+				}
+			});
+			
+		}
 
 		function scrollAnimationStep(initPos, stepAmount) {
 			var newPos = initPos - stepAmount > 0 ? initPos - stepAmount : 0;
@@ -45,6 +59,10 @@ const app = ( () => {
 
 		function showActivePage(links, pages, hash){
 
+			if ( !isPageExists(pages, hash) ) { 
+				hash = '#/home';
+			}
+
 			const pageIds = hash.substr(2).split('/');
 
 			const topOffset = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
@@ -69,6 +87,7 @@ const app = ( () => {
 						page.classList.add('visible');
 
 						lazyLoad.show(page);
+
 					}else{
 						page.classList.remove('visible');
 						page.classList.add('invisible');
@@ -85,6 +104,10 @@ const app = ( () => {
 
 
 			hightlightLinks(links, hash);
+
+			//if (window.location.hash.length > 0){
+				
+			//}
 
 		}
 
@@ -133,11 +156,7 @@ const app = ( () => {
 			
 			let hash = window.location.hash;
 
-			if ( !isPageExists(pages, hash) ) { 
-				hash = '#/home';
-			}
-
-			showActivePage(links, pages, hash);
+			history.push(hash);
 
 			links && [].forEach.call( links, (link) => {
 
@@ -146,9 +165,8 @@ const app = ( () => {
 
 					const hash = link.getAttribute('data-nav');
 
-					if (isPageExists(pages, hash) ) { 
-						window.location.hash = hash;
-						showActivePage(links, pages, hash);
+					if (isPageExists(pages, hash) ) { 						
+						history.push(hash);
 					}else{
 						console.error('no such page');
 					}
@@ -159,6 +177,7 @@ const app = ( () => {
 
 		function init(links, pages){
 			route(links, pages);
+			historyHandler(links, pages);
 		}	
 
 		return {
