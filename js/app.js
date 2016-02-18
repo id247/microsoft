@@ -26,7 +26,7 @@ const app = ( () => {
 		function historyHandler(links, pages){
 			
 			let unlisten = history.listen(location => {
-				console.log(location);
+				//console.log(location);
 				if ( location.action === 'PUSH' || location.action === 'POP' ){
 					showActivePage(links, pages, location.hash);
 				}
@@ -34,53 +34,60 @@ const app = ( () => {
 			
 		}
 
-		function scrollAnimationStep(initPos, stepAmount) {
-			var newPos = initPos - stepAmount > 0 ? initPos - stepAmount : 0;
-
-			if (document.documentElement && document.documentElement.scrollTop){
-				document.documentElement.scrollTop = newPos;
-			}else{
-				document.body.scrollTop = newPos;
-			}
-
-			newPos && setTimeout(function () {
-				scrollAnimationStep(newPos, stepAmount);
-			}, 20);
-		}
-
-		function scrollTopAnimated(topOffset, speed) {
-			
-			var stepAmount = topOffset;
-
-			speed && (stepAmount = (topOffset * 20)/speed);
-
-			scrollAnimationStep(topOffset, stepAmount);
-		}
-
 		function showActivePage(links, pages, hash){
 
 			if ( !isPageExists(pages, hash) ) { 
 				hash = '#/home';
 			}
+			
+			const initPos = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+			const step = initPos < 1000 ? parseInt(initPos * .15) : parseInt(initPos * .3);
 
-			const pageIds = hash.substr(2).split('/');
+			function scrollAnimation(initPos, step, callback) {
+				var newPos = initPos - step > 0 ? initPos - step : 0;
 
-			const topOffset = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+				if (document.documentElement && document.documentElement.scrollTop){
+					document.documentElement.scrollTop = newPos;
+				}else{
+					document.body.scrollTop = newPos;
+				}
 
-			let timout = 0;
-
-			if (topOffset < 200 ){
-				timout = 0;
-			}else if (topOffset < 1000){
-				timout = 200;
-			}else{
-				timout = 300;
+				if (newPos){
+					setTimeout(function () {
+						scrollAnimation(newPos, step);
+					}, 20);
+				}else{
+					callback();
+				}
 			}
 
-			scrollTopAnimated(topOffset, timout);
+			function hightlightLinks(links, hash){
 
-			setTimeout( () => {
+				links && [].forEach.call( links, link => {
+					var parent = link.parentNode.tagName.toLowerCase() === 'li' ? link.parentNode : false;
 
+					const linkIds = link.getAttribute('data-nav').substr(2).split('/');
+					const highlightIndex = parseInt( link.getAttribute('data-highlight') ) || 0;
+					const hashIds = hash.substr(2).split('/');
+
+					if ( hashIds.indexOf( linkIds[highlightIndex - 1] ) > -1 ){
+						link.classList.add('active');
+						if (parent){
+							parent.classList.add('active');
+						}
+					}else{
+						link.classList.remove('active');
+						if (parent){
+							parent.classList.remove('active');
+						}
+					}
+				});
+			}
+
+			function show(links, pages, hash){
+
+				const pageIds = hash.substr(2).split('/');
+					
 				pages && [].forEach.call( pages, (page) => {
 					if ( pageIds.indexOf(page.id) > -1){
 						page.classList.remove('invisible');
@@ -100,38 +107,14 @@ const app = ( () => {
 					}, 1000);
 				});
 
-			}, timout);
+				hightlightLinks(links, hash);
 
+			}
 
-			hightlightLinks(links, hash);
-
-			//if (window.location.hash.length > 0){
-				
-			//}
-
-		}
-
-		function hightlightLinks(links, hash){
-
-			links && [].forEach.call( links, link => {
-				var parent = link.parentNode.tagName.toLowerCase() === 'li' ? link.parentNode : false;
-
-				const linkIds = link.getAttribute('data-nav').substr(2).split('/');
-				const highlightIndex = parseInt( link.getAttribute('data-highlight') ) || 0;
-				const hashIds = hash.substr(2).split('/');
-
-				if ( hashIds.indexOf( linkIds[highlightIndex - 1] ) > -1 ){
-					link.classList.add('active');
-					if (parent){
-						parent.classList.add('active');
-					}
-				}else{
-					link.classList.remove('active');
-					if (parent){
-						parent.classList.remove('active');
-					}
-				}
+			scrollAnimation(initPos, step, () => {
+				show(links, pages, hash);
 			});
+			
 		}
 
 
@@ -152,11 +135,12 @@ const app = ( () => {
 			return false;
 		}
 
-		function route(links, pages){
+		function route(links, pages, baseUrl){
 			
-			let hash = window.location.hash;
+			const hash = window.location.hash;
+			const url = baseUrl + hash;
 
-			history.push(hash);
+			history.push(url);
 
 			links && [].forEach.call( links, (link) => {
 
@@ -164,9 +148,10 @@ const app = ( () => {
 					e.preventDefault();
 
 					const hash = link.getAttribute('data-nav');
+					const url = baseUrl + hash;
 
 					if (isPageExists(pages, hash) ) { 						
-						history.push(hash);
+						history.push(url);
 					}else{
 						console.error('no such page');
 					}
@@ -175,8 +160,8 @@ const app = ( () => {
 			});
 		}
 
-		function init(links, pages){
-			route(links, pages);
+		function init(links, pages, baseUrl){
+			route(links, pages, baseUrl);
 			historyHandler(links, pages);
 		}	
 
@@ -243,7 +228,7 @@ const app = ( () => {
 
 		setHeaderFixed(DOM.container);
 
-		mainRouter.init(DOM.navLinks, DOM.pages);
+		mainRouter.init(DOM.navLinks, DOM.pages, options.baseUrl);
 
 		parallax(DOM.mixTablet);
 
