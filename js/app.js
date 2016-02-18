@@ -40,21 +40,21 @@ const app = ( () => {
 				hash = '#/home';
 			}
 			
-			const initPos = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
-			const step = initPos < 1000 ? parseInt(initPos * .15) : parseInt(initPos * .3);
+			const startPosition = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+			const step = parseInt(startPosition * ( startPosition < 1000 ? .15 : .3 ) );
 
-			function scrollAnimation(initPos, step, callback) {
-				var newPos = initPos - step > 0 ? initPos - step : 0;
+			function scrollAnimation(startPosition, step, callback) {
+				var newPosition = startPosition - step > 0 ? startPosition - step : 0;
 
 				if (document.documentElement && document.documentElement.scrollTop){
-					document.documentElement.scrollTop = newPos;
+					document.documentElement.scrollTop = newPosition;
 				}else{
-					document.body.scrollTop = newPos;
+					document.body.scrollTop = newPosition;
 				}
 
-				if (newPos){
+				if (newPosition){
 					setTimeout(function () {
-						scrollAnimation(newPos, step);
+						scrollAnimation(newPosition, step, callback);
 					}, 20);
 				}else{
 					callback();
@@ -96,10 +96,15 @@ const app = ( () => {
 						lazyLoad.show(page);
 
 					}else{
+
+						if (page.classList.contains('visible')){
+							lazyLoad.hide(page);
+						}
+
 						page.classList.remove('visible');
 						page.classList.add('invisible');
 
-						lazyLoad.hide(page);
+						
 					}
 					//add transitions only after first routing
 					setTimeout( () => {
@@ -111,7 +116,7 @@ const app = ( () => {
 
 			}
 
-			scrollAnimation(initPos, step, () => {
+			scrollAnimation(startPosition, step, () => {
 				show(links, pages, hash);
 			});
 			
@@ -176,8 +181,18 @@ const app = ( () => {
 		function each(page, action = 'show'){
 			const items =  page.querySelectorAll('[data-src]');
 
+			const preloader = function(e){
+				if (action === 'show'){
+					this.parentNode.classList.add('loaded');
+				}else{
+					this.parentNode.classList.remove('loaded');
+				}
+				this.removeEventListener('load', preloader);
+			}
+
 			items && [].forEach.call( items,  item => {
 				item.src = (action === 'show') ? item.getAttribute('data-src') : item.getAttribute('data-src-placeholder');
+				item.addEventListener('load', preloader);
 			});
 		}
 
@@ -203,9 +218,11 @@ const app = ( () => {
 			
 			const parentTop = element.parentNode.offsetTop;
 
-			const distance = ( topOffset - parentTop ) / 1.5;
+			const distance = parseInt( ( topOffset - parentTop ) / 1.5 );
 
-			if (distance <= 0){
+			if (distance > 1000) return;
+
+			if (distance < 0){
 				element.style.bottom = distance + 'px';
 			}else{
 				element.style.bottom = 0 + 'px';

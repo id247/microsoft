@@ -101,10 +101,6 @@ sup{
 }
 
 
-@keyframes spin{
-	0% { transform: rotate(0)}
-	100% { transform: rotate(360deg)}
-}
 
 /* ==========================================================================
  * Layout
@@ -227,6 +223,7 @@ sup{
 	img{
 		max-width: 100%;
 		height: auto;
+		border: 1px solid #ccc;
 	}
 
 	blockquote{
@@ -427,8 +424,8 @@ sup{
 .home-mix{
 	background: #1679d5 url(../images/bg/home-mix.jpg) 50% 0 no-repeat;
 	background-size: cover;
-	min-height: image-height('../images/bg/home-mix.jpg');
-	padding: 145px 0 90px;
+	//min-height: image-height('../images/bg/home-mix.jpg');
+	padding: 136px 0 90px;
 	position: relative;
 	overflow: hidden;
 
@@ -808,6 +805,7 @@ sup{
 		padding-bottom: 51.2%; /* 16:9 */
 		padding-top: 25px;
 		height: 0;
+		
 		iframe{		
 			position: absolute;
 			top: 0;
@@ -826,7 +824,43 @@ sup{
 }
 
 
-/* ==========================================================================
- * 
- * ========================================================================== */
+.iframe-container{
+	position: relative;
+	
+	&:before,
+	&:after{
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background: #dfdfdf;
+		//background: #dfdfdf url(../images/loader.gif) 50% 50% no-repeat;
+		//transition: all .2s;
+		z-index: 10;
+	}
+
+	&:after{
+		margin: auto;
+		content: '';
+		display: block;
+		width: 38px;
+		height: 38px;
+		background: #686868;
+		animation: 2s linear loadder infinite;
+	}
+
+	&.loaded:before,
+	&.loaded:after{
+		display: none;
+	}
+}
+
+
+@keyframes loadder{
+	0% { transform: rotate(0) scale(1)}
+	50% { transform: rotate(180deg) scale(.5) }
+	100% { transform: rotate(360deg) scale(1) }
+}
 
