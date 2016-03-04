@@ -387,7 +387,7 @@ sup{
 	&__list{
 		@include list;
 		text-align: center;
-		margin: 0 -2.1% -20px;
+		margin: 0 -2.1% 20px;
 	}
 
 	&__item{
@@ -401,6 +401,18 @@ sup{
 
 .home-competition-item{
 
+	cursor: pointer;
+
+	&:hover{
+		.home-competition-item{
+
+			&__image{
+				opacity: .8;
+			}
+		}
+	}
+
+
 	&__image-placeholder{
 		margin: 0 0 10px;
 	}
@@ -408,6 +420,7 @@ sup{
 	&__image{
 		max-width: 100%;
 		height: auto;
+		transition: all .2s;
 	}
 
 	&__title{

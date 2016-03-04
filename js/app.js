@@ -46,11 +46,8 @@ const app = ( () => {
 			function scrollAnimation(startPosition, step, callback) {
 				var newPosition = startPosition - step > 0 ? startPosition - step : 0;
 
-				if (document.documentElement && document.documentElement.scrollTop){
-					document.documentElement.scrollTop = newPosition;
-				}else{
-					document.body.scrollTop = newPosition;
-				}
+				document.documentElement.scrollTop = newPosition;
+				document.body.scrollTop = newPosition;
 
 				if (newPosition){
 					setTimeout(function () {
@@ -61,6 +58,18 @@ const app = ( () => {
 				}
 			}
 
+			function jumpTo(jumpToId){
+				
+				const jumpToElement = jumpToId && document.getElementById(jumpToId);
+
+				if (!jumpToElement) return false;
+
+				const newPosition = jumpToElement.offsetTop - 70;
+
+				document.documentElement.scrollTop = newPosition;
+				document.body.scrollTop = newPosition;
+			}
+
 			function hightlightLinks(links, hash){
 
 				links && [].forEach.call( links, link => {
@@ -68,7 +77,9 @@ const app = ( () => {
 
 					const linkIds = link.getAttribute('data-nav').substr(2).split('/');
 					const highlightIndex = parseInt( link.getAttribute('data-highlight') ) || 0;
-					const hashIds = hash.substr(2).split('/');
+					let hashIds = hash.substr(2).split('/').map( (hashId) => {
+						return hashId.split('#')[0];
+					})
 
 					if ( hashIds.indexOf( linkIds[highlightIndex - 1] ) > -1 ){
 						link.classList.add('active');
@@ -85,15 +96,25 @@ const app = ( () => {
 			}
 
 			function show(links, pages, hash){
+				
+				let jumpToId;
 
-				const pageIds = hash.substr(2).split('/');
-					
+				const pageIds = hash.substr(2).split('/').map( (hashId) => {
+						hashId = hashId.split('#');
+						
+						jumpToId = hashId[1];
+						
+						return hashId[0];						
+				});
+	
 				pages && [].forEach.call( pages, (page) => {
 					if ( pageIds.indexOf(page.id) > -1){
 						page.classList.remove('invisible');
 						page.classList.add('visible');
 
 						lazyLoad.show(page);
+
+						jumpTo(jumpToId);
 
 					}else{
 
@@ -125,7 +146,9 @@ const app = ( () => {
 
 		function isPageExists(pages, hash){
 
-			var pageIds = hash.substr(2).split('/');
+			var pageIds = hash.substr(2).split('/').map( pageId => {
+				return pageId.split('#')[0];
+			});
 
 			var existsPages = [].filter.call( pages, page => { 
 				return ( 
@@ -191,7 +214,9 @@ const app = ( () => {
 			}
 
 			items && [].forEach.call( items,  item => {
-				item.src = (action === 'show') ? item.getAttribute('data-src') : item.getAttribute('data-src-placeholder');
+				//item.src = (action === 'show') ? item.getAttribute('data-src') : item.getAttribute('data-src-placeholder');
+				item.contentWindow.location.replace( (action === 'show') ? item.getAttribute('data-src') : item.getAttribute('data-src-placeholder') );
+				
 				item.addEventListener('load', preloader);
 			});
 		}
