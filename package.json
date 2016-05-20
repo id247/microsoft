@@ -34,7 +34,6 @@
     "gulp-watch": "latest",
     "gulp.spritesmith": "latest",
     "history": "^2.1.1",
-    "md5-file": "latest",
     "rev-hash": "^1.0.0",
     "strip-loader": "^0.1.2",
     "webpack": "latest",

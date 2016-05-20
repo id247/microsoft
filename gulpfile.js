@@ -3,24 +3,18 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')(); //lazy load some of gulp plugins
 
-var fs = require('fs');
-var del = require('del');
 var watch = require('gulp-watch');
-var md5File = require('md5-file');
-var revHash = require('rev-hash');
 var spritesmith = require('gulp.spritesmith');
-var server = require('gulp-server-livereload');
-
-var webpack = require('webpack');
-var webpackConfig = require('./webpack.config.js');
 
 var devMode = process.env.NODE_ENV || 'dev';
 
 var destFolder = 'dist';
 
 gulp.task('clean', function(callback) {
+	$.del = require('del');
+
 	if (devMode == 'prod'){
-		return del(['dist']);
+		return $.del(['dist']);
 	}else{
 		callback();
 	}
@@ -28,8 +22,6 @@ gulp.task('clean', function(callback) {
 
 // STYLES
 gulp.task('sass', function () {
-
-	const date = new Date().getTime();
 
 	return gulp.src('src/sass/style.scss')
 		.pipe($.if(devMode !== 'prod', $.sourcemaps.init())) 
@@ -46,13 +38,14 @@ gulp.task('sass', function () {
 
 // image urls
 gulp.task('modifyCssUrls', function () {
-	const date = Math.round(new Date().getTime()/1000.0);
+	$.fs = require('fs');
+	$.revHash = require('rev-hash');
 
 	return gulp.src(destFolder + '/assets/css/style.css')
 		.pipe($.modifyCssUrls({
 			modify: function (url, filePath) {
-				var buffer = fs.readFileSync(url.replace('../', destFolder + '/assets/'));				
-	        	return url + '?_v=' + revHash(buffer);
+				var buffer = $.fs.readFileSync(url.replace('../', destFolder + '/assets/'));				
+	        	return url + '?_v=' + $.revHash(buffer);
 	      	},
 		}))		
 		.pipe($.minifyCss({compatibility: 'ie8'}))
@@ -92,7 +85,6 @@ gulp.task('sprite', function(callback) {
 
 	spriteData.css.pipe(gulp.dest('src/sass/'));
 
-
 	callback();
 });
 
@@ -126,12 +118,13 @@ gulp.task('html', function() {
 
 
 //set new css and js versions
-gulp.task('vers', function(){
-		
+gulp.task('vers', function(){	
+	$.fs = require('fs');
+	$.revHash = require('rev-hash');
 
-	var cssVer =  fs.existsSync(destFolder + '/assets/css/style.css') && revHash(fs.readFileSync(destFolder + '/assets/css/style.css'));
-	var dnevnikVer =  fs.existsSync(destFolder + '/assets/js/dnevnik.js') && revHash(fs.readFileSync(destFolder + '/assets/js/dnevnik.js'));
-	var mosregVer =  fs.existsSync(destFolder + '/assets/js/mosreg.js') && revHash(fs.readFileSync(destFolder + '/assets/js/mosreg.js'));
+	var cssVer =  $.fs.existsSync(destFolder + '/assets/css/style.css') && $.revHash($.fs.readFileSync(destFolder + '/assets/css/style.css'));
+	var dnevnikVer =  $.fs.existsSync(destFolder + '/assets/js/dnevnik.js') && $.revHash($.fs.readFileSync(destFolder + '/assets/js/dnevnik.js'));
+	var mosregVer =  $.fs.existsSync(destFolder + '/assets/js/mosreg.js') && $.revHash($.fs.readFileSync(destFolder + '/assets/js/mosreg.js'));
 
 	return gulp.src([destFolder + '/{dnevnik,mosreg}/*.html'])
 		.pipe($.if(!!cssVer, $.replace( /style\.css(\S*)\"/g, 'style.css?_v=' + cssVer + '"' )))
@@ -148,10 +141,12 @@ gulp.task('vers', function(){
 
 
 gulp.task('webpack', function(callback) {
+	$.webpack = require('webpack');
+	$.webpackConfig = require('./webpack.config.js');
     
-    var myConfig = Object.create(webpackConfig);
+    var myConfig = Object.create($.webpackConfig);
 
-    webpack(myConfig, 
+    $.webpack(myConfig, 
     function(err, stats) {
         if(err) throw new $.util.PluginError('webpack', err);
         $.util.log('[webpack]', stats.toString({
@@ -165,8 +160,10 @@ gulp.task('webpack', function(callback) {
 
 // BUILD
 gulp.task('server', function () {
+	$.server = require('gulp-server-livereload');
+
 	gulp.src(destFolder)
-	.pipe(server({
+	.pipe($.server({
 		livereload: true,
 		directoryListing: false,
 		open: false,
