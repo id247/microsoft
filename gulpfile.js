@@ -1,32 +1,16 @@
 'use strict';
 
+var gulp = require('gulp');
+var $ = require('gulp-load-plugins')(); //lazy load some of gulp plugins
+
 var fs = require('fs');
 var del = require('del');
-var gulp = require('gulp');
-var gulpIf = require('gulp-if');
-var md5File = require('md5-file');
-var replace = require('gulp-replace');
-var buffer = require('gulp-buffer');
-var revHash = require('rev-hash');
-
-var newer = require('gulp-newer');
-var notify = require('gulp-notify');
-
-var sass = require('gulp-sass');
-var minifyCss = require('gulp-minify-css');
-var sourcemaps = require('gulp-sourcemaps');
-var spritesmith = require('gulp.spritesmith');
-var autoprefixer = require('gulp-autoprefixer');
-var modifyCssUrls = require('gulp-modify-css-urls');
-var cssImageDimensions = require('gulp-css-image-dimensions');
-
 var watch = require('gulp-watch');
+var md5File = require('md5-file');
+var revHash = require('rev-hash');
+var spritesmith = require('gulp.spritesmith');
 var server = require('gulp-server-livereload');
 
-var htmlmin = require('gulp-htmlmin');
-var fileinclude = require('gulp-file-include');
-
-var gutil = require('gulp-util');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 
@@ -48,15 +32,15 @@ gulp.task('sass', function () {
 	const date = new Date().getTime();
 
 	return gulp.src('src/sass/style.scss')
-		.pipe(gulpIf(devMode !== 'prod', sourcemaps.init())) 
-		.pipe(sass({outputStyle: 'expanded'})) 
-		.on('error', notify.onError())
-		.pipe(autoprefixer({
+		.pipe($.if(devMode !== 'prod', $.sourcemaps.init())) 
+		.pipe($.sass({outputStyle: 'expanded'})) 
+		.on('error', $.notify.onError())
+		.pipe($.autoprefixer({
 			browsers: ['> 1%'],
 			cascade: false
 		}))
-		.pipe(cssImageDimensions())
-		.pipe(gulpIf(devMode !== 'prod', sourcemaps.write())) 
+		.pipe($.cssImageDimensions())
+		.pipe($.if(devMode !== 'prod', $.sourcemaps.write())) 
 		.pipe(gulp.dest(destFolder + '/assets/css'));  
 });
 
@@ -65,13 +49,13 @@ gulp.task('modifyCssUrls', function () {
 	const date = Math.round(new Date().getTime()/1000.0);
 
 	return gulp.src(destFolder + '/assets/css/style.css')
-		.pipe(modifyCssUrls({
+		.pipe($.modifyCssUrls({
 			modify: function (url, filePath) {
 				var buffer = fs.readFileSync(url.replace('../', destFolder + '/assets/'));				
 	        	return url + '?_v=' + revHash(buffer);
 	      	},
 		}))		
-		.pipe(minifyCss({compatibility: 'ie8'}))
+		.pipe($.minifyCss({compatibility: 'ie8'}))
     	.pipe(gulp.dest(destFolder + '/assets/css'));
 
 });
@@ -80,14 +64,14 @@ gulp.task('modifyCssUrls', function () {
 // ASSETS
 gulp.task('assets-files', function(){
 	return gulp.src(['src/assets/**/*.*', '!src/assets/sprite/*.*', '!src/assets/favicon.ico'], {since: gulp.lastRun('assets-files')})
-		.pipe(newer(destFolder + '/assets'))
+		.pipe($.newer(destFolder + '/assets'))
 		.pipe(gulp.dest(destFolder + '/assets'))
 });
 
 
 gulp.task('assets-favicon', function(){
 	return gulp.src('src/assets/favicon.ico', {since: gulp.lastRun('assets-favicon')})
-		.pipe(newer(destFolder))
+		.pipe($.newer(destFolder))
 		.pipe(gulp.dest(destFolder))
 });
 
@@ -100,7 +84,7 @@ gulp.task('sprite', function(callback) {
 			cssName: '_sprites.scss',
 			imgPath: '../images/sprite.png'
 		}))
-		.on('error', notify.onError())
+		.on('error', $.notify.onError())
 		
 
 	spriteData.img
@@ -123,15 +107,15 @@ gulp.task('html', function() {
 	let folders = devMode === 'dev' ? 'local' : '{dnevnik,mosreg}';
 
 	return gulp.src(['src/html/' + folders + '/**/*.html', 'src/html/*.html'])
-		.pipe(fileinclude({
+		.pipe($.fileInclude({
 			prefix: '@@',
 			basepath: '@file',
 			indent: true
 		}))
-		.on('error', notify.onError())
-		.pipe(gulpIf(function(file){ //if not local - htmlmin it
+		.on('error', $.notify.onError())
+		.pipe($.if(function(file){ //if not local - $.htmlmin it
 				return file.path.indexOf('/local/') === -1;
-			}, htmlmin({collapseWhitespace: true}))
+			}, $.htmlmin({collapseWhitespace: true}))
 		)
 		.pipe(gulp.dest(destFolder));
 });
@@ -150,13 +134,13 @@ gulp.task('vers', function(){
 	var mosregVer =  fs.existsSync(destFolder + '/assets/js/mosreg.js') && revHash(fs.readFileSync(destFolder + '/assets/js/mosreg.js'));
 
 	return gulp.src([destFolder + '/{dnevnik,mosreg}/*.html'])
-		.pipe(gulpIf(!!cssVer, replace( /style\.css(\S*)\"/g, 'style.css?_v=' + cssVer + '"' )))
-		.pipe(gulpIf(!!dnevnikVer, replace( /dnevnik\.js(\S*)\"/g, 'dnevnik.js?_v=' + dnevnikVer + '"' )))
-		.pipe(gulpIf(!!mosregVer, replace( /mosreg\.js(\S*)\"/g, 'mosreg.js?_v=' + mosregVer + '"' )))
-		.pipe(gulpIf(!!cssVer, replace( /\.png(\S*)\"/g, '.png?_v=' + cssVer + '"')))
-		.pipe(gulpIf(!!cssVer, replace( /\.jpg(\S*)\"/g, '.jpg?_v=' + cssVer + '"')))
-		.pipe(gulpIf(!!cssVer, replace( /\.gif(\S*)\"/g, '.gif?_v=' + cssVer + '"')))
-		.on('error', notify.onError())
+		.pipe($.if(!!cssVer, $.replace( /style\.css(\S*)\"/g, 'style.css?_v=' + cssVer + '"' )))
+		.pipe($.if(!!dnevnikVer, $.replace( /dnevnik\.js(\S*)\"/g, 'dnevnik.js?_v=' + dnevnikVer + '"' )))
+		.pipe($.if(!!mosregVer, $.replace( /mosreg\.js(\S*)\"/g, 'mosreg.js?_v=' + mosregVer + '"' )))
+		.pipe($.if(!!cssVer, $.replace( /\.png(\S*)\"/g, '.png?_v=' + cssVer + '"')))
+		.pipe($.if(!!cssVer, $.replace( /\.jpg(\S*)\"/g, '.jpg?_v=' + cssVer + '"')))
+		.pipe($.if(!!cssVer, $.replace( /\.gif(\S*)\"/g, '.gif?_v=' + cssVer + '"')))
+		.on('error', $.notify.onError())
 		.pipe(gulp.dest(destFolder));
 
 });
@@ -169,8 +153,8 @@ gulp.task('webpack', function(callback) {
 
     webpack(myConfig, 
     function(err, stats) {
-        if(err) throw new gutil.PluginError('webpack', err);
-        gutil.log('[webpack]', stats.toString({
+        if(err) throw new $.util.PluginError('webpack', err);
+        $.util.log('[webpack]', stats.toString({
             // output options
         }));
         callback();

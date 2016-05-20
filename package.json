@@ -21,6 +21,7 @@
     "gulp-file-include": "latest",
     "gulp-htmlmin": "latest",
     "gulp-if": "latest",
+    "gulp-load-plugins": "^1.2.2",
     "gulp-minify-css": "latest",
     "gulp-modify-css-urls": "^0.2.2",
     "gulp-newer": "^1.1.0",
