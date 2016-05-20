@@ -42,6 +42,10 @@ a{
 	&:hover{
 		border-color: currentColor;
 	}	
+
+	&--blue{
+		color: $blue;
+	}
 }
 
 .selflink{
@@ -188,6 +192,9 @@ sup{
 
 	p{
 		margin: 0 0 1.5em;
+		&:last-child{
+			margin: 0;
+		}
 	}
 
 	ul{
@@ -253,7 +260,6 @@ sup{
 	&__menu{
 		display: inline-block;
 		vertical-align: middle;
-		margin: 3px 0 0; 
 	}
 }
 
@@ -275,6 +281,10 @@ sup{
 		&:first-child{
 			margin-left: 0;
 		}
+
+		@media (max-width: 1050px){
+			margin-left: 19px;
+		}
 	}
 
 	&__href{
@@ -295,6 +305,10 @@ sup{
 
 	&__section{
 		padding: 80px 0 80px;
+
+		&--beige-bg{
+			background: #f1f1f1;
+		}
 	}
 	
 	&__title{
@@ -303,6 +317,11 @@ sup{
 		text-align: center;
 		margin: 0 0 1em;
 	}
+	
+	&__subtitle{
+		font-weight: 700;
+		font-size: 30px;
+		margin: 0 0 1.5em;	}
 }
 
 /* ==========================================================================
@@ -478,6 +497,157 @@ sup{
 		display: inline-block;
 		vertical-align: top;
 		margin: 0 9px 10px 0;
+	}
+}
+
+/* ==========================================================================
+ * expert-top
+ * ========================================================================== */
+
+.expert-top{
+	background: #0d5685 url(../images/bg/expert.jpg) 50% 0 no-repeat;
+	background-size: cover;
+	color: #fff;
+	padding: 90px 0 90px;
+	min-height: image-height('../assets/images/bg/expert.jpg');
+
+	&__content{
+		width: 60%;
+	}
+
+	&__competition{
+		font-size: 18px;
+		margin: 0 0 .8em;
+	}
+
+	&__title{
+		text-align: left;
+		margin: 0 0 .7em;
+	}	
+
+	&__text{
+		color: #7babcb;
+		margin: 0 0 70px;
+	}
+
+	&__text-highlight{
+		color: #fff;
+	}
+
+	&__buttons{
+		
+	}
+
+	&__button-placeholder{
+		display: inline-block;
+		vertical-align: top;
+		margin: 0 6px 0 0;
+	}
+}
+
+
+/* ==========================================================================
+ * expert-benefits
+ * ========================================================================== */
+
+.expert-benefits{
+	position: relative;
+	&:before{
+		content: '';
+		position: absolute;
+		top: -15px;
+		right: 0;
+		display: block;
+		@include sprite($mouse);
+	}
+
+	&__wrap{
+		@media (max-width: 1240px){
+			padding-right: 250px;
+		}
+	}
+
+	&__title{
+		
+	}
+
+	&__list{
+		font-size: 18px;
+	}
+
+	&__item{
+		margin: 0 0 1em;
+		padding: 0 0 0 40px;
+		position: relative;
+		&:before{
+			content: '';
+			display: block;
+			width: 4px;
+			height: 4px;
+			border-radius: 50%;
+			background: $text;
+
+			position: absolute;
+			top: 7px;
+			left: 0;
+		}
+
+		&:last-child{
+			margin-bottom: 0;
+		}
+	}
+}
+
+/* ==========================================================================
+ * expert-forum
+ * ========================================================================== */
+
+.expert-forum{
+
+	&__list{
+		@include list;
+		text-align: left;
+		margin: 0 0 20px;
+
+		//display: flex;
+	}
+
+	&__item{
+		display: inline-block;
+		vertical-align: top;
+		max-width: 17.2%;
+		margin: 0 .9% 20px;
+		text-align: left;
+		&:first-child{
+			margin-left: 0;			
+		}
+		&:last-child{
+			margin-right: 0;
+		}
+
+		&:nth-child(1){
+			max-width: 22%;
+		}
+
+		&:nth-child(2){
+			max-width: 21%;
+		}
+
+		&:nth-child(3){
+			max-width: 18%;
+		}
+
+		&:nth-child(4){
+			max-width: 14.5%;
+		}
+
+		&:nth-child(5){
+			max-width: 14.5%;
+		}
+	}
+
+	&__desc{
+		font-size: 14px;
 	}
 }
 

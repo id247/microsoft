@@ -12,32 +12,43 @@ At the bottom of this section, we provide information about the spritesheet itse
 $spritesheet: width height image $spritesheet-sprites;
 */
 $logo-name: 'logo';
-$logo-x: 0px;
+$logo-x: 213px;
 $logo-y: 0px;
-$logo-offset-x: 0px;
+$logo-offset-x: -213px;
 $logo-offset-y: 0px;
 $logo-width: 179px;
 $logo-height: 39px;
-$logo-total-width: 179px;
-$logo-total-height: 55px;
+$logo-total-width: 392px;
+$logo-total-height: 284px;
 $logo-image: '../images/sprite.png';
-$logo: (0px, 0px, 0px, 0px, 179px, 39px, 179px, 55px, '../images/sprite.png', 'logo', );
+$logo: (213px, 0px, -213px, 0px, 179px, 39px, 392px, 284px, '../images/sprite.png', 'logo', );
+$mouse-name: 'mouse';
+$mouse-x: 0px;
+$mouse-y: 0px;
+$mouse-offset-x: 0px;
+$mouse-offset-y: 0px;
+$mouse-width: 213px;
+$mouse-height: 284px;
+$mouse-total-width: 392px;
+$mouse-total-height: 284px;
+$mouse-image: '../images/sprite.png';
+$mouse: (0px, 0px, 0px, 0px, 213px, 284px, 392px, 284px, '../images/sprite.png', 'mouse', );
 $next-name: 'next';
-$next-x: 0px;
+$next-x: 213px;
 $next-y: 39px;
-$next-offset-x: 0px;
+$next-offset-x: -213px;
 $next-offset-y: -39px;
 $next-width: 16px;
 $next-height: 16px;
-$next-total-width: 179px;
-$next-total-height: 55px;
+$next-total-width: 392px;
+$next-total-height: 284px;
 $next-image: '../images/sprite.png';
-$next: (0px, 39px, 0px, -39px, 16px, 16px, 179px, 55px, '../images/sprite.png', 'next', );
-$spritesheet-width: 179px;
-$spritesheet-height: 55px;
+$next: (213px, 39px, -213px, -39px, 16px, 16px, 392px, 284px, '../images/sprite.png', 'next', );
+$spritesheet-width: 392px;
+$spritesheet-height: 284px;
 $spritesheet-image: '../images/sprite.png';
-$spritesheet-sprites: ($logo, $next, );
-$spritesheet: (179px, 55px, '../images/sprite.png', $spritesheet-sprites, );
+$spritesheet-sprites: ($logo, $mouse, $next, );
+$spritesheet: (392px, 284px, '../images/sprite.png', $spritesheet-sprites, );
 
 /*
 The provided mixins are intended to be used with the array-like variables
