@@ -14,9 +14,9 @@ module.exports = {
 		mosreg: './src/js/mosreg'
 	},
 	output: {
-		path: __dirname + '/dist/assets/js',
+		path: __dirname + '/production/assets/js',
 		filename: '[name].js',
-		publicPath: __dirname + '/dist/assets/js',
+		publicPath: __dirname + '/production/assets/js',
 		pathinfo: true
 	},
 

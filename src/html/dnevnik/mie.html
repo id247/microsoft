@@ -1,13 +1,16 @@
 @@include("../common/head.html", {
 	"server": "dnevnik",
-	"title": "Международная программа Microsoft Педагог-эксперт"
+	"title": "Международная программа Microsoft Педагог-эксперт",
+	"style": "https://ad.csdnevnik.ru/special/staging/microsoft/css/style.css"
 })
 
 	<div class="body-container" id="body-container">
 
 		<div class="body-container__header" id="header">
 		
-			@@include("../common/header.html")
+			@@include("../common/header.html", {
+				"project": "mie"
+			})
 		
 		</div><!-- /.body-container__header -->
 
@@ -17,17 +20,6 @@
 
 		</div> <!-- /.body-container__page  -->
 
-		<div class="body-container__page js-page" id="about">
-			
-			@@include("../pages/about.html")
-
-		</div> <!-- /.body-container__page  -->
-
-		<div class="body-container__page js-page" id="mix">
-			
-			@@include("../pages/mix.html")
-
-		</div> <!-- /.body-container__page  -->
 
 		<div class="body-container__page js-page" id="videos">
 			
@@ -44,5 +36,6 @@
 	</div> <!-- /.body-container -->
 
 @@include("../common/foot.html", {
-	"server": "dnevnik"
+	"server": "dnevnik",
+	"script": "https://ad.csdnevnik.ru/special/staging/microsoft/js/dnevnik.js"
 })

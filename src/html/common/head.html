@@ -11,12 +11,8 @@
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-	@@if (server !== "local"){
-	<link rel="stylesheet" href="https://ad.csdnevnik.ru/special/staging/microsoft/css/style.css">
-	}
-	@@if (server === "local"){
-	<link rel="stylesheet" href="assets/css/style.css">
-	}
+	<link rel="stylesheet" href="@@style">
+
 	<!--[if lt IE 9]>
 	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->

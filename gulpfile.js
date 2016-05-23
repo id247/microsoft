@@ -8,7 +8,7 @@ var spritesmith = require('gulp.spritesmith');
 
 var devMode = process.env.NODE_ENV || 'dev';
 
-var destFolder = devMode === 'dev' ? 'dev' : 'dist';
+var destFolder = devMode === 'dev' ? 'dev' : 'production';
 
 
 
@@ -123,6 +123,7 @@ gulp.task('vers', function(){
 		.pipe($.if(!!cssVer, $.replace( /\.png(\S*)\"/g, '.png?_v=' + cssVer + '"')))
 		.pipe($.if(!!cssVer, $.replace( /\.jpg(\S*)\"/g, '.jpg?_v=' + cssVer + '"')))
 		.pipe($.if(!!cssVer, $.replace( /\.gif(\S*)\"/g, '.gif?_v=' + cssVer + '"')))
+		.pipe($.if(!!cssVer, $.replace( /src\=\"assets\//g, 'src="https://ad.csdnevnik.ru/special/staging/microsoft/')))
 		.on('error', $.notify.onError())
 		.pipe(gulp.dest(destFolder));
 
