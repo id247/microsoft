@@ -187,8 +187,6 @@ gulp.task('build',
 
 gulp.task('prod', gulp.series('build', 'modifyCssUrls', 'vers'));
 
-gulp.task('prod-fast', gulp.series('assets', 'sass', 'html', 'modifyCssUrls', 'vers'));
-
 gulp.task('default', gulp.parallel('server', 'watch'));
 
 

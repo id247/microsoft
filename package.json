@@ -40,7 +40,8 @@
     "webpack-config": "^4.0.0"
   },
   "scripts": {
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "prod": "NODE_ENV=prod gulp prod"
   },
   "author": "",
   "license": "ISC"
