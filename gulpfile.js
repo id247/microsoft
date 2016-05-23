@@ -8,17 +8,9 @@ var spritesmith = require('gulp.spritesmith');
 
 var devMode = process.env.NODE_ENV || 'dev';
 
-var destFolder = 'dist';
+var destFolder = devMode === 'dev' ? 'dev' : 'dist';
 
-gulp.task('clean', function(callback) {
-	$.del = require('del');
 
-	if (devMode == 'prod'){
-		return $.del(['dist']);
-	}else{
-		callback();
-	}
-});
 
 // STYLES
 gulp.task('sass', function () {
@@ -105,9 +97,7 @@ gulp.task('html', function() {
 			indent: true
 		}))
 		.on('error', $.notify.onError())
-		.pipe($.if(function(file){ //if not local - $.htmlmin it
-				return file.path.indexOf('/local/') === -1;
-			}, $.htmlmin({collapseWhitespace: true}))
+		.pipe($.if(devMode === 'prod', $.htmlmin({collapseWhitespace: true}))
 		)
 		.pipe(gulp.dest(destFolder));
 });
@@ -178,14 +168,16 @@ gulp.task('watch', function(){
 	gulp.watch('src/html/**/*.html', gulp.series('html'));
 });
 
-gulp.task('build', 
-	gulp.series(
-		'clean', 
-		gulp.parallel('assets', 'sass', 'html', 'webpack')
-	)
-);
+gulp.task('clean', function(callback) {
+	$.del = require('del');
+	return $.del([destFolder]);
+});
 
-gulp.task('prod', gulp.series('build', 'modifyCssUrls', 'vers'));
+gulp.task('build', gulp.series('assets', gulp.parallel('sass', 'html', 'webpack')));
+
+gulp.task('start', gulp.series('clean', 'build', gulp.parallel('server', 'watch')));
+
+gulp.task('prod', gulp.series('clean', 'build', 'modifyCssUrls', 'vers'));
 
 gulp.task('default', gulp.parallel('server', 'watch'));
 

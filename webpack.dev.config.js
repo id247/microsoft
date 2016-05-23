@@ -14,9 +14,9 @@ module.exports = {
     },
     devtool: '#inline-source-map',
     output: {
-        path: __dirname + '/dist/assets/js',
+        path: __dirname + '/dev/assets/js',
         filename: '[name].js',
-        publicPath: __dirname + '/dist/assets/js',
+        publicPath: __dirname + '/dev/assets/js',
         pathinfo: true
     },
 
