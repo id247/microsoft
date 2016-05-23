@@ -1,7 +1,8 @@
 {
-  "name": "project",
-  "version": "1.0.0",
+  "name": "Microsoft",
+  "version": "2.0.0",
   "description": "",
+  "cdn": "https://ad.csdnevnik.ru/special/staging/microsoft/",
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {
@@ -26,6 +27,7 @@
     "gulp-modify-css-urls": "^0.2.2",
     "gulp-newer": "^1.1.0",
     "gulp-notify": "^2.2.0",
+    "gulp-posthtml": "^1.5.2",
     "gulp-replace": "latest",
     "gulp-sass": "latest",
     "gulp-server-livereload": "latest",
@@ -34,15 +36,18 @@
     "gulp-watch": "latest",
     "gulp.spritesmith": "latest",
     "history": "^2.1.1",
+    "posthtml": "^0.8.7",
     "rev-hash": "^1.0.0",
     "strip-loader": "^0.1.2",
     "webpack": "latest",
     "webpack-config": "^4.0.0"
   },
   "scripts": {
-    "lint": "eslint src/js",   
+    "lint": "eslint src/js",
     "prod": "NODE_ENV=prod gulp prod",
-    "test": "NODE_ENV=test gulp build"
+    "test": "NODE_ENV=test gulp test",
+    "prod-html": "NODE_ENV=prod gulp prod-html",
+    "prod-css": "NODE_ENV=prod gulp prod-css"
   },
   "author": "",
   "license": "ISC"
