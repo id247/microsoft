@@ -88,20 +88,40 @@ gulp.task('assets', gulp.parallel('assets-files', 'assets-favicon', 'sprite'));
 
 
 // HTML
-gulp.task('html', function() {
+gulp.task('html', function(callback){
 
-	let folders = devMode === 'dev' ? 'local' : '{dnevnik,mosreg}';
+	function html(folder) {
 
-	return gulp.src(['src/html/' + folders + '/**/*.html', 'src/html/*.html'])
-		.pipe($.fileInclude({
-			prefix: '@@',
-			basepath: '@file',
-			indent: true
-		}))
-		.on('error', $.notify.onError())
-		.pipe($.if(devMode === 'prod', $.htmlmin({collapseWhitespace: true}))
-		)
-		.pipe(gulp.dest(destFolder));
+		var newDestFolder = destFolder + (folder !== 'local' ? '/' + folder : '');
+
+		return gulp.src([
+			'src/html/index/**/*.html', 
+			'src/html/*.html', 
+			'!src/html/index/**/_*.html',
+			'!src/html/_*.html', 
+			])
+			.pipe($.fileInclude({
+				prefix: '@@',
+				basepath: '@file',
+				context: {
+					'server': folder
+				},
+				indent: true
+			}))
+			.on('error', $.notify.onError())
+			//.pipe($.if(devMode === 'prod', $.htmlmin({collapseWhitespace: true})))
+			.pipe(gulp.dest(newDestFolder));
+	}
+	
+	if (devMode == 'dev'){
+		html('local');
+	}else{
+		html('mosreg');
+		html('dnevnik');
+	}
+
+	callback();
+
 });
 
 //set new images,css and js hash versions
