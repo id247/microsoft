@@ -25,8 +25,10 @@ const app = ( () => {
 		function historyHandler(links, pages){
 			
 			let unlisten = history.listen(location => {
-				//console.log(location);
-				if ( location.action === 'PUSH' || location.action === 'POP' ){
+
+				const isNavLink = !location.hash || [].filter.call( links, (link) => ( link.getAttribute('data-nav') === location.hash) ).length > 0;
+
+				if ( isNavLink && ( location.action === 'PUSH' || location.action === 'POP' ) ){
 					showActivePage(links, pages, location.hash);
 				}
 			});
@@ -236,6 +238,10 @@ const app = ( () => {
 	})();
 
 	function parallax(element){
+
+		if (!element){
+			return false;
+		}
 
 		function move(element){
 			const topOffset = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;

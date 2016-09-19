@@ -987,6 +987,43 @@ sup{
 	}
 }
 
+.tutorial-courses{
+
+	&__item{
+		font-size: 18px;
+		margin: 0 0 1em;
+	}
+
+	&__href{
+		
+		display: inline-block;
+		padding: 8px 10px;
+		color: #fff;
+
+		background: #ff8b01;
+		transition: all .2s;
+
+		&:hover{
+			opacity: .8;
+		}
+
+		&--1{
+			background: #ff8b01;
+		}
+
+		&--2{
+			background: #64318f;
+		}
+
+		&--3{
+			background: #00aff1;
+		}
+
+		&--4{
+			background: #b500a0;
+		}
+	}
+}
 
 /* ==========================================================================
  * videos
@@ -1133,6 +1170,7 @@ sup{
 	&__item{
 		margin: 0 0 40px;
 	}
+
 }
 
 .expert-courses-item{
@@ -1147,6 +1185,58 @@ sup{
 	&__text{
 		
 	}
+
+	&__href{
+
+		&:after{
+			content: '';
+			display: inline-block;
+			vertical-align: middle;
+			margin: 0 0 0 10px;
+		}
+		
+		&--excel{
+			&:after{
+				@include sprite($excel);
+			}
+		}
+		
+		&--word{
+			&:after{
+				@include sprite($word);
+			}
+		}
+		
+		&--powerpoint{
+			&:after{
+				@include sprite($powerpoint);
+			}
+		}
+		
+		&--outlook{
+			&:after{
+				@include sprite($outlook);
+			}
+		}
+		
+		&--mix{
+			&:after{
+				@include sprite($mix);
+			}
+		}
+
+		&:hover{
+			.expert-courses-item__href-text{
+				border-color: transparent;
+			}
+		}
+	}
+
+	&__href-text{
+		border-bottom: 1px solid;
+		transition: all .2s;
+	}
+
 }
 
 .expert-courses-end{

@@ -87,40 +87,65 @@ gulp.task('sprite', function(callback) {
 gulp.task('assets', gulp.parallel('assets-files', 'assets-favicon', 'sprite'));
 
 
+
 // HTML
 gulp.task('html', function(callback){
 
-	function html(folder) {
-
-		var newDestFolder = destFolder + (folder !== 'local' ? '/' + folder : '');
-
-		return gulp.src([
-			'src/html/index/**/*.html', 
-			'src/html/*.html', 
-			'!src/html/index/**/_*.html',
-			'!src/html/_*.html', 
-			])
-			.pipe($.fileInclude({
-				prefix: '@@',
-				basepath: '@file',
-				context: {
-					'server': folder
-				},
-				indent: true
-			}))
-			.on('error', $.notify.onError())
-			//.pipe($.if(devMode === 'prod', $.htmlmin({collapseWhitespace: true})))
-			.pipe(gulp.dest(newDestFolder));
+	const servers = {
+		dev: [
+			'local',
+		],
+		prod: [
+			'dnevnik',
+			'staging',
+		],
 	}
+
+	const currentServers = servers[devMode];
 	
-	if (devMode == 'dev'){
-		html('local');
-	}else{
-		html('mosreg');
-		html('dnevnik');
+	if (!currentServers){
+		callback();
+		return false;
 	}
 
-	callback();
+	currentServers.map( (server, i) => {
+		html(server, () => {
+			if (i === currentServers.length - 1){
+				callback();
+			}
+		});
+	});
+
+	function html(server, callback) {
+
+		let newDestFolder = destFolder;
+
+		if (server !== 'local'){
+			newDestFolder += '/' + server;
+		}
+
+		const files = [
+			'src/html/index/*.html'
+		];
+
+		if (server !== 'local'){
+			files.push('!src/html/oauth.html');
+		}
+
+		return gulp.src(files)
+		.pipe($.fileInclude({
+			prefix: '@@',
+			basepath: '@file',
+			context: {
+				server: server,
+			},
+			indent: true
+		}))
+		.on('error', $.notify.onError())
+		.pipe($.if(devMode === 'production', $.htmlmin({collapseWhitespace: true})))
+		.pipe(gulp.dest(newDestFolder))
+		.on('end', callback);
+	};
 
 });
 
@@ -153,7 +178,7 @@ gulp.task('vers', function(){
 
 	function setVestion(node, attrName){
 		const attr = node.attrs && node.attrs[attrName] ? node.attrs[attrName] : false;
-		
+
 		if (!attr || attr.indexOf('assets') !== 0){
 			return node;
 		}
@@ -161,6 +186,7 @@ gulp.task('vers', function(){
 		const version =  getVersion(attr);
 
 		if (!version){
+			console.log('no such file' + node.attrs[attrName]);
 			return node;
 		}
 
