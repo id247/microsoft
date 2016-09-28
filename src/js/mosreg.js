@@ -5,11 +5,11 @@ import app from './app';
 //start the magic
 document.addEventListener('DOMContentLoaded', () => {
 
-	let baseUrl = '/promo/mixathon/';
+	let baseUrl = '/';
 
-	if (window.location.href.indexOf('/promo/mie') > -1){
+	//if (window.location.href.indexOf('/promo/mie2') > -1){
 		baseUrl = '/promo/mie/'
-	} 
+	//} 
 
 	app.init({
 		baseUrl: baseUrl

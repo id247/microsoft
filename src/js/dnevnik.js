@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let baseUrl = '/';
 
 	//if (window.location.href.indexOf('/promo/mie2') > -1){
-		baseUrl = '/promo/mie2/'
+		baseUrl = '/promo/mie/'
 	//} 
 
 	app.init({

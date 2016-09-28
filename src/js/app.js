@@ -10,6 +10,7 @@ const app = ( () => {
 			pages: document.querySelectorAll('.js-page'),
 			navLinks: document.querySelectorAll('[data-nav]'),
 			mixTablet: document.querySelector('#home-mix-tablet'),
+			externalLinks: document.querySelectorAll('[href*="microsoft"]'),
 		}
 	}
 
@@ -265,6 +266,23 @@ const app = ( () => {
 
 	}
 
+	function externalLinks(links){
+
+		//console.log(links);
+
+		if (typeof ga !== 'function'){
+			return;
+		}
+
+		[].forEach.call( links, link => {
+
+			link.addEventListener('click', function(){
+				ga('send', 'event', 'Ссылка на сайт', 'Переход');
+			});
+
+		});
+	}
+
 
 	/*
 	*	INIT
@@ -278,6 +296,8 @@ const app = ( () => {
 		mainRouter.init(DOM.navLinks, DOM.pages, options.baseUrl);
 
 		parallax(DOM.mixTablet);
+		
+		externalLinks(DOM.externalLinks);
 
 	}
 
