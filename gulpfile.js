@@ -138,6 +138,16 @@ gulp.task('html', function(callback){
 			basepath: '@file',
 			context: {
 				server: server,
+				courseMix: 'https://education.microsoft.com/GetTrained/Office-Mix-lessons',
+				courseOutlook: 'https://education.microsoft.com/GetTrained/outlook-2016',
+				coursePowerpoint: 'https://education.microsoft.com/GetTrained/powerpoint',
+				coursePowerpoint2: 'https://education.microsoft.com/Story/Course?token=oeHbG',
+				courseWord: 'https://education.microsoft.com/GetTrained/word-2016',
+				courseExcel: 'https://education.microsoft.com/GetTrained/excel-2016',
+				course1: 'https://education.microsoft.com/Story/Course?token=o4xUk',
+				course2: 'https://education.microsoft.com/Story/Course?token=aOUCy',
+				course3: 'https://education.microsoft.com/Story/Course?token=5Fugi',
+				course4: 'https://education.microsoft.com/Story/Course?id=147897&token=XT8jt',
 			},
 			indent: true
 		}))

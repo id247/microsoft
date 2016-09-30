@@ -1163,12 +1163,58 @@ sup{
 		}
 	}
 
+	&__icons{
+		margin: 0 0 50px;
+	}
+
 	&__list{
 		margin: 0 0 40px;
 	}
 
 	&__item{
 		margin: 0 0 40px;
+	}
+
+}
+
+.courses-icons{
+
+	&__list{
+		
+	}
+
+	&__item{
+		display: inline-block;
+		vertical-align: top;
+		margin: 0 30px 0 0;
+		width: 130px;
+	}
+
+	&__href{
+
+		display: block;
+		text-indent: -9999px;
+		
+		&--excel{
+			@include sprite($excel);
+		}
+		
+		&--word{
+			@include sprite($word);
+		}
+		
+		&--powerpoint{
+				@include sprite($powerpoint);
+		}
+		
+		&--outlook{
+				@include sprite($outlook);
+		}
+		
+		&--mix{
+				@include sprite($mix);
+		}
+
 	}
 
 }
@@ -1198,30 +1244,35 @@ sup{
 		&--excel{
 			&:after{
 				@include sprite($excel);
+				width: 45px;
 			}
 		}
 		
 		&--word{
 			&:after{
 				@include sprite($word);
+				width: 45px;
 			}
 		}
 		
 		&--powerpoint{
 			&:after{
 				@include sprite($powerpoint);
+				width: 45px;
 			}
 		}
 		
 		&--outlook{
 			&:after{
 				@include sprite($outlook);
+				width: 45px;
 			}
 		}
 		
 		&--mix{
 			&:after{
 				@include sprite($mix);
+				width: 45px;
 			}
 		}
 
