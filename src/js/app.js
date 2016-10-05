@@ -31,6 +31,12 @@ const app = ( () => {
 
 				if ( isNavLink && ( location.action === 'PUSH' || location.action === 'POP' ) ){
 					showActivePage(links, pages, location.hash);
+
+					if (typeof ga === 'function'){
+						const screen = location.hash ? location.hash.substr(2) : 'home';
+						console.log('screenview', screen);
+						ga('send', 'screenview', {screenName: screen});
+					}
 				}
 			});
 			
